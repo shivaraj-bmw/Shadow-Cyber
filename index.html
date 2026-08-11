@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cyber Incident Simulator</title>
+<meta name="description" content="A simulated digital forensics and incident response training platform. 100% fictional data — for education only." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Ambient background layers -->
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-noise" aria-hidden="true"></div>
+<div class="scanline" aria-hidden="true"></div>
+
+<!-- Toast container -->
+<div id="toastRoot" class="toast-root" aria-live="polite"></div>
+
+<!-- ============ BOOT SCREEN ============ -->
+<section id="screen-boot" class="screen boot-screen" aria-label="System boot">
+  <div class="boot-box">
+    <div class="boot-title">CYBER DEFENSE NETWORK</div>
+    <div class="boot-rule"></div>
+    <div id="bootLines" class="boot-lines"></div>
+    <div class="boot-progress-track"><div id="bootProgressFill" class="boot-progress-fill"></div></div>
+    <div id="bootStatusLine" class="boot-status">SYSTEM STATUS: INITIALIZING</div>
+    <button id="skipBootBtn" class="btn-ghost-sm boot-skip">SKIP ➜</button>
+  </div>
+</section>
+
+<!-- ============ APP SHELL (hidden until boot completes) ============ -->
+<div id="appShell" class="app-shell hidden">
+
+  <!-- Top status bar -->
+  <header class="topbar">
+    <button class="brand" id="brandHomeBtn" aria-label="Go to home">
+      <span class="brand-mark">◈</span>
+      <span class="brand-text">CYBER<b>INCIDENT</b>SIMULATOR</span>
+    </button>
+    <div class="topbar-stats">
+      <div class="tb-stat"><span class="tb-label">RANK</span><span id="tbRank" class="tb-value">NOVICE</span></div>
+      <div class="tb-stat"><span class="tb-label">XP</span><span id="tbXp" class="tb-value">0</span></div>
+      <div class="tb-stat"><span class="tb-label">THREAT</span><span id="tbThreat" class="tb-value pill-ok">LOW</span></div>
+    </div>
+    <button id="terminalToggleBtn" class="btn-ghost-sm" title="Open terminal">TERMINAL</button>
+  </header>
+
+  <main id="mainView" class="main-view"></main>
+
+  <!-- Bottom nav (mobile) -->
+  <nav class="bottom-nav" id="bottomNav" aria-label="Primary navigation">
+    <button data-nav="home" class="bn-item active"><span class="bn-icon">⌂</span><span>Home</span></button>
+    <button data-nav="cases" class="bn-item"><span class="bn-icon">▣</span><span>Cases</span></button>
+    <button data-nav="training" class="bn-item"><span class="bn-icon">◎</span><span>Train</span></button>
+    <button data-nav="lab" class="bn-item"><span class="bn-icon">⚗</span><span>Lab</span></button>
+    <button data-nav="archive" class="bn-item"><span class="bn-icon">☰</span><span>Archive</span></button>
+  </nav>
+</div>
+
+<!-- ============ TERMINAL OVERLAY ============ -->
+<div id="terminalOverlay" class="terminal-overlay hidden" role="dialog" aria-label="Simulation terminal">
+  <div class="terminal-window">
+    <div class="terminal-titlebar">
+      <span>SIMULATION TERMINAL — fictional environment only</span>
+      <button id="terminalCloseBtn" class="btn-ghost-sm">✕</button>
+    </div>
+    <div id="terminalOutput" class="terminal-output"></div>
+    <div class="terminal-inputline">
+      <span class="terminal-prompt">investigator@sim:~$</span>
+      <input id="terminalInput" class="terminal-input" type="text" autocomplete="off" spellcheck="false" aria-label="Terminal input" />
+    </div>
+  </div>
+</div>
+
+<!-- ============ EVIDENCE MODAL ============ -->
+<div id="evidenceModal" class="modal-overlay hidden" role="dialog" aria-label="Evidence analysis">
+  <div class="modal-window">
+    <div class="modal-titlebar">
+      <span>EVIDENCE ANALYSIS</span>
+      <button id="evidenceModalCloseBtn" class="btn-ghost-sm">✕</button>
+    </div>
+    <div id="evidenceModalBody" class="modal-body"></div>
+  </div>
+</div>
+
+<!-- ============ CONFIRM MODAL ============ -->
+<div id="confirmModal" class="modal-overlay hidden" role="dialog" aria-label="Confirm action">
+  <div class="modal-window modal-window-sm">
+    <div class="modal-titlebar"><span id="confirmTitle">CONFIRM ACTION</span></div>
+    <div class="modal-body">
+      <p id="confirmMessage"></p>
+      <div class="modal-actions">
+        <button id="confirmCancelBtn" class="btn-ghost">Cancel</button>
+        <button id="confirmOkBtn" class="btn-danger">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CERTIFICATE MODAL ============ -->
+<div id="certificateModal" class="modal-overlay hidden" role="dialog" aria-label="Generate certificate">
+  <div class="modal-window modal-window-sm">
+    <div class="modal-titlebar"><span>🎓 CERTIFICATE OF COMPLETION</span></div>
+    <div class="modal-body">
+      <p class="muted" style="margin-bottom:14px;">Enter the name to print on your certificate. It will be generated as a downloadable PNG image.</p>
+      <input id="certificateNameInput" type="text" placeholder="Full name" maxlength="60"
+        style="width:100%; background:var(--bg-1); border:1px solid var(--border); color:var(--text-0); padding:11px 12px; border-radius:6px; font-family:var(--font-mono); font-size:13.5px;" />
+      <div class="modal-actions">
+        <button id="certificateCancelBtn" class="btn-ghost">Cancel</button>
+        <button id="certificateGenerateBtn" class="btn">Generate &amp; Download</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Templates -->
+<template id="tpl-toast">
+  <div class="toast">
+    <span class="toast-icon"></span>
+    <span class="toast-text"></span>
+  </div>
+</template>
+
+<script src="data/cases.js"></script>
+<script src="data/training.js"></script>
+<script src="data/certificate-bg.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
